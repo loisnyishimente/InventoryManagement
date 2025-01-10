@@ -3,7 +3,6 @@ const router = express.Router();
 const Inventory = require('../models/inventory');
 const { check, validationResult } = require('express-validator');
 
-// Add New Product
 router.post('/add', [
     check('name').notEmpty().withMessage('Name is required'),
     check('SKU').notEmpty().withMessage('SKU is required'),
@@ -14,17 +13,23 @@ router.post('/add', [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log('Validation error:', errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
+});
 
+//get Products
+router.get('/get', async (req, res) => {
     try {
-        const { name, SKU, category, supplier, quantity, price } = req.body;
-        const product = await Inventory.create({ name, SKU, category, supplier, quantity, price });
-        res.status(201).json({ message: 'Product added successfully', product });
+        const products = await Inventory.findAll();  
+        res.status(200).json({ products });
     } catch (err) {
-        res.status(500).json({ message: 'Error adding product', error: err.message });
+        console.log(err)
+        res.status(500).json({ message: 'Error fetching products', error: err.message });
     }
 });
+
+module.exports = router;
 
 // Update Product
 router.put('/update/:id', async (req, res) => {
