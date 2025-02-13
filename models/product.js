@@ -1,78 +1,17 @@
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
+const Category = require("./Category");
+const Warehouse = require("./warehouse");
 
-const db = require('../config/db');  // Ensure the database connection is imported
+const Product = sequelize.define("Product", {
+  name: { type: DataTypes.STRING, allowNull: false },
+  SKU: { type: DataTypes.STRING, allowNull: false, unique: true },
+  stock: { type: DataTypes.INTEGER, defaultValue: 0 },
+  price: { type: DataTypes.FLOAT, allowNull: false },
+  barcode: { type: DataTypes.STRING },
+});
 
-const Product = {
-
-  add: (product) => {
-    const sql = 'INSERT INTO products (name, sku, category, supplier, quantity, price, batch, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    return new Promise((resolve, reject) => {
-      db.query(sql, [
-        product.name, 
-        product.sku, 
-        product.category, 
-        product.supplier, 
-        product.quantity, 
-        product.price, 
-        product.batch, 
-        product.expiry_date
-      ], (err, results) => {
-        if (err) reject(err);
-        resolve(results);
-      });
-    });
-  },
-
-
-  getAll: () => {
-    const sql = 'SELECT * FROM products';
-    return new Promise((resolve, reject) => {
-      db.query(sql, (err, results) => {
-        if (err) reject(err);
-        resolve(results);
-      });
-    });
-  },
-
-
-  getByCategory: (category) => {
-    const sql = 'SELECT * FROM products WHERE category = ?';
-    return new Promise((resolve, reject) => {
-      db.query(sql, [category], (err, results) => {
-        if (err) reject(err);
-        resolve(results);
-      });
-    });
-  },
-
-  search: (query) => {
-    let sql = 'SELECT * FROM products WHERE 1=1';
-    if (query.name) {
-      sql += ` AND name LIKE '%${query.name}%'`;
-    }
-    if (query.category) {
-      sql += ` AND category LIKE '%${query.category}%'`;
-    }
-    if (query.sku) {
-      sql += ` AND sku = '${query.sku}'`;
-    }
-    return new Promise((resolve, reject) => {
-      db.query(sql, (err, results) => {
-        if (err) reject(err);
-        resolve(results);
-      });
-    });
-  },
-
-  // Method to check for expired products
-  checkExpiry: () => {
-    const sql = 'SELECT * FROM products WHERE expiry_date < NOW()';
-    return new Promise((resolve, reject) => {
-      db.query(sql, (err, results) => {
-        if (err) reject(err);
-        resolve(results);
-      });
-    });
-  }
-};
+Product.belongsTo(Category, { foreignKey: "category_id" });
+Product.belongsTo(Warehouse, { foreignKey: "warehouse_id" });
 
 module.exports = Product;
