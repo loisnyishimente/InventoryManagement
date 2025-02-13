@@ -2,7 +2,7 @@ const PDFDocument = require('pdfkit');
 
 const InvoiceGenerator = {
   generate: (saleDetails) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const doc = new PDFDocument();
       let buffers = [];
       doc.on('data', buffers.push.bind(buffers));

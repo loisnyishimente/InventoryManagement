@@ -6,22 +6,16 @@ const inventoryRoutes = require('./routes/inventoryRoutes');
 const salesRoutes = require('./routes/salesRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const barcodeRoutes = require('./routes/barcodeRoutes');
-
 const sequelize = require('./config/db');
 const { Sequelize } = require('sequelize');
-
-
 dotenv.config();
-
 const app = express();
-
-
 app.use(express.json());
 app.use(cors());
 
 app.use('/barcode', barcodeRoutes);
 app.use('/api/auth', authRoutes);
-app.use('api/products', inventoryRoutes);
+app.use('/api/products', inventoryRoutes); 
 app.use('/api/reports', reportRoutes);
 app.use('api/sales', salesRoutes);
 sequelize.sync({ force: true }).then(() => {

@@ -1,7 +1,7 @@
 // models/User.js
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');  // Import the sequelize instance from db.js
+const sequelize = require('../config/db'); 
 const User = sequelize.define('User', {
     email: {
         type: DataTypes.STRING,
@@ -14,7 +14,7 @@ const User = sequelize.define('User', {
       },
       role: {
         type: DataTypes.STRING,
-        defaultValue: 'Staff',  // Default to 'Staff' role
+        defaultValue: 'Staff',  
       },
       resetPasswordToken: {
         type: DataTypes.STRING,

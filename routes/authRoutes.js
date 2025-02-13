@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.post('/signup', [
-    check('email', 'Please include a valid email').isEmail(),
+    check('email', 'valid email').isEmail(),
     check('password', 'Password is required').not().isEmpty(),
 ], signup);
 

@@ -1,24 +1,16 @@
 const express = require('express');
-const router = express.Router();
+
 const Inventory = require('../models/inventory');
-const { check, validationResult } = require('express-validator');
+const { check } = require('express-validator');
+const inventoryController = require('../controllers/inventoryController');
+const router = express.Router();
+const express = require('express');
+const inventoryController = require('../controllers/inventoryController');
 
-router.post('/add', [
-    check('name').notEmpty().withMessage('Name is required'),
-    check('SKU').notEmpty().withMessage('SKU is required'),
-    check('category').notEmpty().withMessage('Category is required'),
-    check('supplier').notEmpty().withMessage('Supplier is required'),
-    check('price').isDecimal().withMessage('Price must be a valid number'),
-    check('quantity').isInt().withMessage('Quantity must be an integer')
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        console.log('Validation error:', errors.array());
-        return res.status(400).json({ errors: errors.array() });
-    }
-});
+router.post('/add', inventoryController.addInventory);
 
-//get Products
+
+
 router.get('/get', async (req, res) => {
     try {
         const products = await Inventory.findAll();  
@@ -31,7 +23,7 @@ router.get('/get', async (req, res) => {
 
 module.exports = router;
 
-// Update Product
+
 router.put('/update/:id', async (req, res) => {
     const { id } = req.params;
     const { name, SKU, category, supplier, quantity, price } = req.body;
@@ -56,7 +48,7 @@ router.put('/update/:id', async (req, res) => {
     }
 });
 
-// Delete Product
+
 router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -73,12 +65,11 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-// Stock Alerts
 router.get('/stock-alerts', async (req, res) => {
     try {
         const lowStockProducts = await Product.findAll({
             where: {
-                quantity: { [Op.lt]: 10 } // Change threshold as needed
+                quantity: { [Op.lt]: 10 } 
             }
         });
         if (lowStockProducts.length === 0) {

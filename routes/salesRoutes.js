@@ -1,21 +1,33 @@
 const express = require('express');
 const router = express.Router();
-const Sale = require('../models/sales');
 const InvoiceGenerator = require('../utils/invoiceGenerator');
 
-// Record a new sale
-router.post('/add', async (req, res) => {
+
+const db = require('../config/db');
+
+router.post('/', async (req, res) => {
+  const { customerName, product, quantity, price } = req.body;
+
+  if (!customerName || !product || !quantity || !price) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
   try {
-    const { customer_name, total_amount, invoice_id, items } = req.body;
-    const saleData = { customer_name, total_amount, invoice_id };
-    const result = await Sale.recordSale(saleData, items);
-    res.status(201).json({ message: 'Sale recorded successfully', saleId: result.saleId });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const [result] = await db.query(
+      'INSERT INTO sales (customerName, product, quantity, price) VALUES (?, ?, ?, ?)',
+      [customerName, product, quantity, price]
+    );
+
+    res.status(201).json({ message: 'Sale recorded successfully!', saleId: result.insertId });
+  } catch (error) {
+    console.error('Error inserting sale:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 });
 
-// Get purchase history for a customer
+module.exports = router;
+
+
 router.get('/history/:customer_name', async (req, res) => {
   try {
     const history = await Sale.getPurchaseHistory(req.params.customer_name);
