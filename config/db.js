@@ -1,23 +1,12 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize({
-  host: process.env.MYSQL_HOST,
-  username: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  dialect: 'mysql',
-  port: 3306,
-  logging: false,
+const sequelize = new Sequelize("inventory_db", "root", "password123", {
+  host: "127.0.0.1",
+  dialect: "mysql",
 });
 
 sequelize.authenticate()
-  .then(() => {
-    console.log('Connection established successfully.');
-  })
-  .catch((error) => {
-    console.error('Unable to connect to the database:', error);
-  });
-
+  .then(() => console.log("Database connected..."))
+  .catch(err => console.log("Error: " + err));
 
 module.exports = sequelize;
